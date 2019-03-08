@@ -1,0 +1,8 @@
+---
+# Variablen für die Datenbankserver
+
+mysqlservice: mysqld
+mysql_port: 3306
+dbuser: humhub
+dbname: humhub
+# dbpassword: TODO VAULT

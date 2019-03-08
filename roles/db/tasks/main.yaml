@@ -1,0 +1,36 @@
+---
+# Installiere MySQL und erzeuge DB-Nutzer mit korrekten Rechten.
+
+- name: Installiere MySQL
+  apt:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+   - mysql-server
+   - python3-mysqldb
+
+- name: Konfiguriere MySQL
+  template: 
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+  notify:
+  - restart mysql
+
+- name: Starte MySQL
+  service:
+    name: mysqld
+    state: started
+    enabled: yes
+
+- name: Erzeuge Datenbank
+  mysql_db:
+    name: "{{ dbname }}"
+    state: present
+
+- name: Erzeuge Datenbankbenutzer
+  mysql_user:
+    name: "{{ dbuser }}"
+    password: "{{ dbpassword }}"
+    priv: "{{ dbname }}.*:SELECT/{{ dbname }}.*:INSERT/{{ dbname }}.*:DELETE/{{ dbname }}.*:UPDATE/{{ dbname }}.*:CREATE/{{ dbname }}.*:ALTER/{{ dbname }}.*:INDEX/{{ dbname }}.*:DROP/{{ dbname }}.*:REFERENCES"
+    host: '%'
+    state: present

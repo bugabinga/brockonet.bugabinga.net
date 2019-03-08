@@ -1,0 +1,22 @@
+---
+# Dieses Playbook gilt für alle Hosts. 
+
+- name: Installiere NTP
+  apt: 
+    name: ntp
+    state: present
+  tags: ntp
+
+- name: Konfiguriere NTP
+  template:
+    src: ntp.conf.j2
+    dest: /etc/ntp.conf
+  tags: ntp
+  notify: restart ntp
+
+- name: Starte NTP
+  service: 
+    name: ntpd
+    state: started 
+    enabled: yes
+  tags: ntp

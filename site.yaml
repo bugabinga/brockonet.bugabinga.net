@@ -1,0 +1,20 @@
+---
+# Dieses Playbook installiert Humhub für Brocko auf einem Ubuntu-System
+
+- name: Basiskonfiguration, welches für alle Server gilt.
+  hosts: all
+  remote_user: root
+  roles:
+    - common
+
+- name: Konfiguriere den Webserver, auf welchem das Humhub-Frontend läuft.
+  hosts: webservers
+  remote_user: root
+  roles:
+    - web
+
+- name: Konfiguriere den Datenbankserver, auf welchem MySQL läuft.
+  hosts: dbservers
+  remote_user: root
+  roles:
+- db
