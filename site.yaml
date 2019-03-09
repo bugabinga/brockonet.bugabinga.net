@@ -1,5 +1,5 @@
 ---
-# Dieses Playbook installiert Humhub für Brocko auf einem Ubuntu-System
+# Dieses Playbook installiert Humhub für Brocko auf Ubuntu-Systemen
 
 - name: Basiskonfiguration, welches für alle Server gilt.
   hosts: all
@@ -17,4 +17,4 @@
   hosts: dbservers
   remote_user: root
   roles:
-- db
+    - db

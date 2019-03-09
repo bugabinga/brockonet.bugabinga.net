@@ -1,6 +1,13 @@
 ---
 # Dieses Playbook gilt für alle Hosts. 
 
+- name: Software Repositories von Ubuntu aktualisieren
+  apt:
+    update_cache: yes
+    cache_valid_time: 1500
+    autoclean: yes
+    autoremove: yes
+
 - name: Installiere NTP
   apt: 
     name: ntp

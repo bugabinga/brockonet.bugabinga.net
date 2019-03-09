@@ -1,0 +1,39 @@
+---
+# Installation von Humhub
+
+- name: Betriebssystem-Benutzer speziell für Humhub erzeugen
+  user:
+    comment: "Humhub User"
+    name: humhub
+
+- name: Humhub runterladen
+  get_url: 
+    url: https://humhub.org/download/start?version={{ humhub_version }}&type=tar.gz
+    checksum: "sha512:{{ humhub_sha512 }}"
+    dest: /home/{{ user }}/tmp
+    mode: 0600
+    group: {{ user }}
+    owner: {{ user }}
+
+- name: Humhub entpacken
+  unarchive:
+    remote_src: yes
+    src: /home/{{ user }}/tmp/humhub-{{ humhub_version }}.tar.gz
+    dest: /home/{{ user }}/app
+    creates: /home/{{ user }}/app
+    mode: 0600
+    group: {{ user }}
+    owner: {{ user }}
+
+- name: Abhängigkeiten von Humhub installieren
+  apt:
+    name:
+      - php7.2
+      - php7.2-gd
+      - php7.2-curl
+      - php7.2-mbstring
+      - php7.2-mysql
+      - php7.2-zip
+      - php7.2-intl
+      - php-imagick
+      - php-apcu

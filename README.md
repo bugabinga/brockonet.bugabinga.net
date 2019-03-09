@@ -22,6 +22,8 @@ localhost
 localhost
 ```
 
+Prüfe [Humhub Requirements] für Mindestanforderungen von [Humhub].
+
 ## Ausführen
 
 Die Skripte lassen sich mit [Ansible] wie folgt ausführen:
@@ -51,5 +53,6 @@ Die Skripte lassen sich mit [Ansible] wie folgt ausführen:
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
 
 [Humhub]: https://humhub.org/de
+[Humhub Requirements]: http://docs.humhub.org/admin-requirements.html
 [Ansible]: https://ansible.org
 [Vault]: https://docs.ansible.com/ansible/2.4/vault.html
