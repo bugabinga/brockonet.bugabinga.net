@@ -25,6 +25,8 @@
 - name: Erzeuge Datenbank
   mysql_db:
     name: "{{ dbname }}"
+    collation: utf8mb4_unicode_ci
+    encoding: utf8mb4  
     state: present
 
 - name: Erzeuge Datenbankbenutzer

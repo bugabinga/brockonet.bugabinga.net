@@ -25,6 +25,34 @@
     group: {{ user }}
     owner: {{ user }}
 
+- name: Rechte auf Humhub-Dateien einrichten (schreibbare)
+  file:
+    path: "{{ item }}"
+    group: www-data
+    recurse: yes
+    state: directory
+  with-items:
+    - /home/{{ user }}/app/assets
+    - /home/{{ user }}/app/protected/config
+    - /home/{{ user }}/app/protected/modules
+    - /home/{{ user }}/app/protected/runtime
+    - /home/{{ user }}/app/uploads
+
+- name: Rechte auf Humhub-Dateien einrichten (nicht schreibbare)
+  file:
+    path: "{{ item }}"
+    group: {{ user }}
+    owner: {{ user }}
+    state: directory
+  with-items:
+    - /home/{{ user }}/app/protected
+    - /home/{{ user }}/app/uploads/file
+
+- name: Rechte auf Humhub-Dateien einrichten (ausführbare)
+  file:
+    path: /home/{{ user }}/app/protected/yii
+    mode: "+x"
+
 - name: Abhängigkeiten von Humhub installieren
   apt:
     name:
@@ -37,3 +65,32 @@
       - php7.2-intl
       - php-imagick
       - php-apcu
+      - libapache2-mod-php7.2
+      - apache2
+
+- name: Webserver konfigurieren
+  template:
+    src: humhub-site.j2
+    dest: /etc/apache2/sites-enabled/humhub-site
+  notify: reload httpd
+
+- name: Alten Default-Vhost aus Apache2 entfernen
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify: reload httpd
+
+- name: Webserver einrichten
+  apache2_module:
+    name: "{{ item }}"
+  with-items:
+    - ssl
+    - headers
+    - php
+  notify: reload httpd
+
+- name: Cronjob für neue SSL-Zertifikate 
+  cron:
+    job: certbot renew --quiet --post-hook "apachectl graceful"
+    name: certbot_renew
+    day: "30"

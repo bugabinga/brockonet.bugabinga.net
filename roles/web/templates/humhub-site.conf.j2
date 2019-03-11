@@ -1,0 +1,40 @@
+<VirtualHost *:80>
+    ServerAdmin {{ webmaster }}
+    ServerName {{ domain }}
+    Redirect / https://{{ domain }}/
+</VirtualHost>
+<VirtualHost *:443>
+    ServerAdmin {{ webmaster }}
+    ServerName {{ domain }}
+    DocumentRoot /home/{{ user }}/app
+    <Directory />
+        Options FollowSymLinks
+        AllowOverride None
+        Order Deny,Allow
+        Deny from All
+    </Directory>
+    <Directory /home/{{ user }}/app/>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+    </Directory>
+    SSLEngine on
+    SSLCertificateFile      /path/to/signed_certificate_followed_by_intermediate_certs
+    SSLCertificateKeyFile   /path/to/private/key
+    SSLCACertificateFile    /path/to/ca_certs_for_client_authentication
+    Header always set Strict-Transport-Security "max-age=15768000"
+</VirtualHost>
+
+SSLProtocol             all -SSLv3 -TLSv1 -TLSv1.1
+SSLCipherSuite          ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256
+SSLHonorCipherOrder     on
+SSLCompression          off
+SSLSessionTickets       off
+SSLUseStapling          on
+SSLStaplingResponderTimeout 5
+SSLStaplingReturnResponderErrors off
+SSLStaplingCache        shmcb:/var/run/ocsp(128000)
+TraceEnable off
+ServerSignature Off
+ServerTokens Prod
