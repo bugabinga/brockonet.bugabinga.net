@@ -24,12 +24,20 @@ localhost
 
 Prüfe [Humhub Requirements] für Mindestanforderungen von [Humhub].
 
+## Abhängigkeiten
+
+```sh
+ansible-galaxy install systemli.letsencrypt
+```
+
 ## Ausführen
 
 Die Skripte lassen sich mit [Ansible] wie folgt ausführen:
 
 ```sh
- ansible-playbook -i hosts site.yml
+ansible-playbook site.yml -i hosts -l webservers -t letsencrypt
+ansible-playbook site.yml -i hosts -l webservers -t letsencrypt -e '{"letsencrypt_cert":{"name":"example","domains":["example.net"],"challenge":"http","http_auth":"standalone"}}'
+ansible-playbook site.yml -i hosts
  ```
 
  > Nimmt an, dass die Hosts in einer `hosts`-Datei definiert sind.
@@ -42,11 +50,11 @@ Die Skripte lassen sich mit [Ansible] wie folgt ausführen:
 
 ## TODOs
 
-- [ ] Geheimnisse in [Vault] speichern
-- [ ] Firewall konfigurieren
-- [ ] Humhub installieren
-- [ ] Humhub konfigurieren
-- [ ] LetsEncrypt-Zertifikate
+- [   ] Geheimnisse in [Vault] speichern
+- [   ] Firewall konfigurieren
+- [ X ] Humhub installieren
+- [ X ] Humhub konfigurieren
+- [ X ] LetsEncrypt-Zertifikate
 
 ---
 
