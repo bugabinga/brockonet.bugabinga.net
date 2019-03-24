@@ -3,11 +3,9 @@
 
 - name: Installiere MySQL
   apt:
-    name: "{{ item }}"
-    state: installed
-  with_items:
-   - mysql-server
-   - python3-mysqldb
+    name:
+      - mysql-server
+      - python-mysqldb
 
 - name: Konfiguriere MySQL
   template: 
@@ -18,7 +16,7 @@
 
 - name: Starte MySQL
   service:
-    name: mysqld
+    name: mysql
     state: started
     enabled: yes
 

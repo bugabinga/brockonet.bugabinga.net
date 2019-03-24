@@ -21,6 +21,6 @@
 
 - name: Starte NTP
   service: 
-    name: ntpd
+    name: ntp
     state: started 
     enabled: yes

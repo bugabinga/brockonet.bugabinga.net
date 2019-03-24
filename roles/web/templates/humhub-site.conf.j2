@@ -6,14 +6,14 @@
 <VirtualHost *:443>
     ServerAdmin {{ webmaster }}
     ServerName {{ domain }}
-    DocumentRoot /home/{{ user }}/app
+    DocumentRoot /home/{{ user }}/humhub-{{ humhub_version }}
     <Directory />
         Options FollowSymLinks
         AllowOverride None
         Order Deny,Allow
         Deny from All
     </Directory>
-    <Directory /home/{{ user }}/app/>
+    <Directory /home/{{ user }}/humhub-{{ humhub_version }}/>
         Options Indexes FollowSymLinks MultiViews
         AllowOverride All
         Order allow,deny

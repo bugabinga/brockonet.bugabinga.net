@@ -4,26 +4,26 @@
 - name: Betriebssystem-Benutzer speziell für Humhub erzeugen
   user:
     comment: "Humhub User"
-    name: humhub
+    name: "{{ user  }}"
 
 - name: Humhub runterladen
   get_url: 
     url: https://humhub.org/download/start?version={{ humhub_version }}&type=tar.gz
     checksum: "sha512:{{ humhub_sha512 }}"
-    dest: /home/{{ user }}/tmp
+    dest: /tmp/humhub.tar.gz
     mode: 0600
-    group: {{ user }}
-    owner: {{ user }}
+    group: "{{ user }}"
+    owner: "{{ user }}"
 
 - name: Humhub entpacken
   unarchive:
     remote_src: yes
-    src: /home/{{ user }}/tmp/humhub-{{ humhub_version }}.tar.gz
-    dest: /home/{{ user }}/app
-    creates: /home/{{ user }}/app
+    src: /tmp/humhub.tar.gz
+    dest: /home/{{ user }}
+    creates: /home/{{ user }}/humhub-{{ humhub_version }}
     mode: 0600
-    group: {{ user }}
-    owner: {{ user }}
+    group: "{{ user }}"
+    owner: "{{ user }}"
 
 - name: Rechte auf Humhub-Dateien einrichten (schreibbare)
   file:
@@ -31,26 +31,26 @@
     group: www-data
     recurse: yes
     state: directory
-  with-items:
-    - /home/{{ user }}/app/assets
-    - /home/{{ user }}/app/protected/config
-    - /home/{{ user }}/app/protected/modules
-    - /home/{{ user }}/app/protected/runtime
-    - /home/{{ user }}/app/uploads
+  with_items:
+    - /home/{{ user }}/humhub-{{ humhub_version }}/assets
+    - /home/{{ user }}/humhub-{{ humhub_version }}/protected/config
+    - /home/{{ user }}/humhub-{{ humhub_version }}/protected/modules
+    - /home/{{ user }}/humhub-{{ humhub_version }}/protected/runtime
+    - /home/{{ user }}/humhub-{{ humhub_version }}/uploads
 
 - name: Rechte auf Humhub-Dateien einrichten (nicht schreibbare)
   file:
     path: "{{ item }}"
-    group: {{ user }}
-    owner: {{ user }}
+    group: "{{ user }}"
+    owner: "{{ user }}"
     state: directory
-  with-items:
-    - /home/{{ user }}/app/protected
-    - /home/{{ user }}/app/uploads/file
+  with_items:
+    - /home/{{ user }}/humhub-{{ humhub_version }}/protected
+    - /home/{{ user }}/humhub-{{ humhub_version }}/uploads/file
 
 - name: Rechte auf Humhub-Dateien einrichten (ausführbare)
   file:
-    path: /home/{{ user }}/app/protected/yii
+    path: /home/{{ user }}/humhub-{{ humhub_version }}/protected/yii
     mode: "+x"
 
 - name: Abhängigkeiten von Humhub installieren
@@ -70,8 +70,8 @@
 
 - name: Webserver konfigurieren
   template:
-    src: humhub-site.j2
-    dest: /etc/apache2/sites-enabled/humhub-site
+    src: humhub-site.conf.j2
+    dest: /etc/apache2/sites-enabled/humhub-site.conf
   notify: reload httpd
 
 - name: Alten Default-Vhost aus Apache2 entfernen
@@ -83,11 +83,17 @@
 - name: Webserver einrichten
   apache2_module:
     name: "{{ item }}"
-  with-items:
+  with_items:
     - ssl
     - headers
-    - php
+    - php7.2
   notify: reload httpd
+
+- name: Webserver service einschalten
+  service:
+    name: apache2
+    state: started
+    enabled: yes
 
 - name: Cronjob für neue SSL-Zertifikate 
   cron:
