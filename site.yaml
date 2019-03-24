@@ -17,13 +17,14 @@
   hosts: webservers
   remote_user: root
   roles:
+    - role: thefinn93.letsencrypt
+      letsencrypt_email: admin@bugabinga.net
+      letsencrypt_webroot_path: /var/www/html
+      letsencrypt_cert_domains:
+        - "{{ domain }}"
+      letsencrypt_renewal_command_args: '--renew-hook "systemctl restart apache2"'
     - web
   vars:
-    letsencrypt_account_email: admin@bugabinga.net
-    letsencrypt_http_auth: webroot
-    letsencrypt_webroot_path: /var/www
-    letsencrypt_webserver_groupname: www-data
-    letsencrypt_dns_challenge: no
     webmaster: admin@bugabinga.net
     domain: brockonet.bugabinga.net
     user: humhub

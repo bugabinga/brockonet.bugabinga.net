@@ -20,9 +20,9 @@
         allow from all
     </Directory>
     SSLEngine on
-    SSLCertificateFile      /path/to/signed_certificate_followed_by_intermediate_certs
-    SSLCertificateKeyFile   /path/to/private/key
-    SSLCACertificateFile    /path/to/ca_certs_for_client_authentication
+    SSLCertificateFile      /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+    SSLCertificateKeyFile   /etc/letsencrypt/live/{{ domain }}/privkey.pem
+    SSLCACertificateFile    /etc/letsencrypt/live/{{ domain }}/cert.pem
     Header always set Strict-Transport-Security "max-age=15768000"
 </VirtualHost>
 

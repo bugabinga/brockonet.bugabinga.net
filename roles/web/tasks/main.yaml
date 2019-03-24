@@ -94,9 +94,3 @@
     name: apache2
     state: started
     enabled: yes
-
-- name: Cronjob für neue SSL-Zertifikate 
-  cron:
-    job: certbot renew --quiet --post-hook "apachectl graceful"
-    name: certbot_renew
-    day: "30"

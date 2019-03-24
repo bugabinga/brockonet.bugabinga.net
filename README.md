@@ -27,7 +27,7 @@ Prüfe [Humhub Requirements] für Mindestanforderungen von [Humhub].
 ## Abhängigkeiten
 
 ```sh
-ansible-galaxy install systemli.letsencrypt
+ansible-galaxy install thefinn93.letsencrypt
 ```
 
 ## Ausführen
@@ -35,12 +35,22 @@ ansible-galaxy install systemli.letsencrypt
 Die Skripte lassen sich mit [Ansible] wie folgt ausführen:
 
 ```sh
-ansible-playbook site.yml -i hosts -l webservers -t letsencrypt
-ansible-playbook site.yml -i hosts -l webservers -t letsencrypt -e '{"letsencrypt_cert":{"name":"example","domains":["example.net"],"challenge":"http","http_auth":"standalone"}}'
-ansible-playbook site.yml -i hosts
- ```
+ansible-playbook --vault-password-file pass -e @secrets.yaml site.yaml -i hosts
+```
 
  > Nimmt an, dass die Hosts in einer `hosts`-Datei definiert sind.
+ > Nimmt an, dass eine Datei `pass` mit Berechtigung *0400* und dem geheimen Passwort der Datei `secrets.yaml` definiert ist.
+
+## Geheimnisse
+
+Geheime Daten können mit [Ansible Vault] wie folgt erzeugt werden.
+Wir benötigen ein Passwort für die MySQL-Datenbank, dass geheim ist.
+
+```sh
+ansible-vault create secrets.yaml
+```
+
+[Ansible Vault]: https://docs.ansible.com/ansible/2.4/vault.html
 
 ## Quellen
 
