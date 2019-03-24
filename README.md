@@ -60,7 +60,9 @@ ansible-vault create secrets.yaml
 
 ## TODOs
 
-- [   ] Geheimnisse in [Vault] speichern
+- [ X ] Geheimnisse in [Vault] speichern
+- [   ] HUmhub auf Produktionsversion umstellen
+- [   ] Humhub optimieren (Cache, Cron Jobs, etc.)
 - [   ] Firewall konfigurieren
 - [ X ] Humhub installieren
 - [ X ] Humhub konfigurieren

@@ -31,6 +31,6 @@
   mysql_user:
     name: "{{ dbuser }}"
     password: "{{ dbpassword }}"
-    priv: "{{ dbname }}.*:SELECT/{{ dbname }}.*:INSERT/{{ dbname }}.*:DELETE/{{ dbname }}.*:UPDATE/{{ dbname }}.*:CREATE/{{ dbname }}.*:ALTER/{{ dbname }}.*:INDEX/{{ dbname }}.*:DROP/{{ dbname }}.*:REFERENCES"
-    host: '%'
+    priv: "{{ dbname }}.*:SELECT,INSERT,DELETE,UPDATE,CREATE,ALTER,INDEX,DROP,REFERENCES"
+    host: 'localhost'
     state: present

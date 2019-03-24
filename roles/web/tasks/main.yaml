@@ -1,57 +1,60 @@
 ---
 # Installation von Humhub
 
-- name: Betriebssystem-Benutzer speziell für Humhub erzeugen
-  user:
-    comment: "Humhub User"
-    name: "{{ user  }}"
-
 - name: Humhub runterladen
   get_url: 
     url: https://humhub.org/download/start?version={{ humhub_version }}&type=tar.gz
     checksum: "sha512:{{ humhub_sha512 }}"
     dest: /tmp/humhub.tar.gz
-    mode: 0600
-    group: "{{ user }}"
-    owner: "{{ user }}"
+
+- name: Ordner für Humhub-Seite erzeugen
+  file:
+    path: /var/www/{{ domain }}
+    state: directory
+    group: www-data
+    owner: www-data
 
 - name: Humhub entpacken
   unarchive:
     remote_src: yes
     src: /tmp/humhub.tar.gz
-    dest: /home/{{ user }}
-    creates: /home/{{ user }}/humhub-{{ humhub_version }}
-    mode: 0600
-    group: "{{ user }}"
-    owner: "{{ user }}"
-
-- name: Rechte auf Humhub-Dateien einrichten (schreibbare)
-  file:
-    path: "{{ item }}"
+    dest: /var/www/{{ domain }}
+    creates: /var/www/{{ domain }}/humhub-{{ humhub_version }}
+    mode: 0700
     group: www-data
-    recurse: yes
-    state: directory
-  with_items:
-    - /home/{{ user }}/humhub-{{ humhub_version }}/assets
-    - /home/{{ user }}/humhub-{{ humhub_version }}/protected/config
-    - /home/{{ user }}/humhub-{{ humhub_version }}/protected/modules
-    - /home/{{ user }}/humhub-{{ humhub_version }}/protected/runtime
-    - /home/{{ user }}/humhub-{{ humhub_version }}/uploads
+    owner: www-data
 
 - name: Rechte auf Humhub-Dateien einrichten (nicht schreibbare)
   file:
     path: "{{ item }}"
-    group: "{{ user }}"
-    owner: "{{ user }}"
+    mode: "-w"
     state: directory
   with_items:
-    - /home/{{ user }}/humhub-{{ humhub_version }}/protected
-    - /home/{{ user }}/humhub-{{ humhub_version }}/uploads/file
+    - /var/www/{{ domain }}/humhub-{{ humhub_version }}/protected
+    - /var/www/{{ domain }}/humhub-{{ humhub_version }}/uploads/file
 
 - name: Rechte auf Humhub-Dateien einrichten (ausführbare)
   file:
-    path: /home/{{ user }}/humhub-{{ humhub_version }}/protected/yii
+    path: /var/www/{{ domain }}/humhub-{{ humhub_version }}/protected/yii
     mode: "+x"
+
+- name: htacces-Datei für humhub-Seite erzeugen
+  template:
+    src: humhub-htaccess.j2
+    dest: /var/www/{{ domain }}/humhub-{{ humhub_version }}/.htaccess
+  notify: reload httpd
+
+- name: phpcs-Datei für humhub-Seite erzeugen
+  template:
+    src: humhub-phpcs.j2
+    dest: /var/www/{{ domain }}/humhub-{{ humhub_version }}/.php_cs
+  notify: reload httpd
+
+- name: common-Konfiguration für Humhub
+  template:
+    src: humhub-common.php.j2
+    dest: /var/www/{{ domain }}/humhub-{{ humhub_version }}/protected/config/common.php
+  notify: reload httpd
 
 - name: Abhängigkeiten von Humhub installieren
   apt:
@@ -86,6 +89,7 @@
   with_items:
     - ssl
     - headers
+    - rewrite
     - php7.2
   notify: reload httpd
 
